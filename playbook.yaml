@@ -1,0 +1,23 @@
+- name: WebServers setup
+  tasks:
+    - name: Run Docker Bash Script
+      ansible.builtin.script: test-project/docker.sh
+      delegate_to: all  
+
+    - name: Pull ECR Image to app1 
+      ansible.builtin.docker_image:
+        name: 264054630238.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:V1.0
+        state: present
+      delegate_to: app1
+
+    - name: Pull ECR Image to app2
+      ansible.builtin.docker_image:
+        name: 264054630238.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:V2.0
+        state: present
+      delegate_to: app2
+
+    - name: Pull ECR Image to app3
+      ansible.builtin.docker_image:
+        name: 264054630238.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:V3.0
+        state: present
+      delegate_to: app3 

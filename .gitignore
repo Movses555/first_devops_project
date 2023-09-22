@@ -1,0 +1,13 @@
+.terraform/
+.vscode/
+keys/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+.terraformrc
+.terraformrc.json
+.terraform.tfvars
+*.tfplan
+*.tfvars
+.terraform/plugins/
+*~.tf
