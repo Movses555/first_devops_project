@@ -24,6 +24,7 @@ resource "aws_iam_policy" "ecr_pull_policy" {
       {
         Action = [
           "ecr:GetDownloadUrlForLayer",
+          "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetRepositoryPolicy",
           "ecr:DescribeRepositories",

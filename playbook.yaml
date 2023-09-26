@@ -1,23 +1,85 @@
-- name: WebServers setup
+- name: Add target IPs to Ansible inventory
+  hosts: localhost
+  gather_facts: yes
   tasks:
-    - name: Run Docker Bash Script
-      ansible.builtin.script: test-project/docker.sh
-      delegate_to: all  
+    - name: Add Server 1 IP to inventory
+      add_host:
+        name: "{{ server1_ip }}"
+        groups: group1
+        ansible_user: ec2-user
+        ansible_private_key_file: test-project/servers-key
+    - name: Add Server 2 IP to inventory  
+      add_host:
+        name: "{{ server2_ip }}"
+        groups: group2
+        ansible_user: ec2-user
+        ansible_private_key_file: test-project/servers-key
+    - name: Add Server 3 IP to inventory  
+      add_host:
+        name: "{{ server3_ip }}"  
+        groups: group3 
+        ansible_user: ec2-user
+        ansible_private_key_file: test-project/servers-key  
 
+- name: Pull ECR Image to group1 and run container
+  hosts: group1   
+  become: yes   
+  tasks:
     - name: Pull ECR Image to app1 
-      ansible.builtin.docker_image:
+      docker_image:
         name: 264054630238.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:V1.0
+        source: pull
         state: present
-      delegate_to: app1
+        docker_api_version: auto
 
+    - name: Run Docker container on server 1
+      docker_container:
+        name: app1_container
+        image: 264054630238.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:V1.0
+        ports:
+          - "80:80"
+        detach: yes
+      environment:
+        AWS_DEFAULT_REGION: "us-east-1"    
+
+- name: Pull ECR Image to group2
+  hosts: group2
+  become: yes
+  tasks:
     - name: Pull ECR Image to app2
-      ansible.builtin.docker_image:
+      docker_image:
         name: 264054630238.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:V2.0
+        source: pull
         state: present
-      delegate_to: app2
+        docker_api_version: auto
 
+    - name: Run Docker container on server 2
+      docker_container:
+        name: app1_container
+        image: 264054630238.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:V2.0
+        ports:
+          - "80:80"
+        detach: yes
+      environment:
+        AWS_DEFAULT_REGION: "us-east-1"        
+
+- name: Pull ECR Image to group3
+  hosts: group3 
+  become: yes 
+  tasks:
     - name: Pull ECR Image to app3
-      ansible.builtin.docker_image:
+      docker_image:
         name: 264054630238.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:V3.0
+        source: pull
         state: present
-      delegate_to: app3 
+        docker_api_version: auto
+
+    - name: Run Docker container on server 3
+      docker_container:
+        name: app1_container
+        image: 264054630238.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:V3.0
+        ports:
+          - "80:80"
+        detach: yes
+      environment:
+        AWS_DEFAULT_REGION: "us-east-1"     

@@ -5,6 +5,7 @@ keys/
 *.tfstate.backup
 .terraform.lock.hcl
 .terraformrc
+.terraform.tfstate.lock.info
 .terraformrc.json
 .terraform.tfvars
 *.tfplan

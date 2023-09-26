@@ -3,10 +3,11 @@ resource "aws_security_group" "server-sg" {
   description = "server-sg"
 
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["78.109.75.12/32"]
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    cidr_blocks     = ["78.109.75.12/32"]
+    security_groups = [aws_security_group.ansible-sg.id]
   }
 
   ingress {
