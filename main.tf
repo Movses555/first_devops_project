@@ -1,3 +1,4 @@
+# Create aws instance for application 1
 resource "aws_instance" "app1_server" {
   ami                    = "ami-03a6eaae9938c858c"
   instance_type          = "t2.micro"
@@ -19,6 +20,7 @@ resource "aws_instance" "app1_server" {
   EOF
 }
 
+# Create aws instance for application 2
 resource "aws_instance" "app2_server" {
   ami                    = "ami-03a6eaae9938c858c"
   instance_type          = "t2.micro"
@@ -40,6 +42,7 @@ resource "aws_instance" "app2_server" {
   EOF
 }
 
+# Create aws instance for application 3
 resource "aws_instance" "app3_server" {
   ami                    = "ami-03a6eaae9938c858c"
   instance_type          = "t2.micro"
@@ -61,6 +64,7 @@ resource "aws_instance" "app3_server" {
   EOF
 }
 
+# Create aws instance for ansible
 resource "aws_instance" "ansible_server" {
   ami                    = "ami-053b0d53c279acc90"
   instance_type          = "t2.micro"
@@ -70,11 +74,13 @@ resource "aws_instance" "ansible_server" {
     Name = "Ansible-Server"
   }
 
+  # Copy ansible installation file to ansible server
   provisioner "file" {
     source      = "./scripts/ansible.sh"
     destination = "/tmp/ansible.sh"
   }
 
+  # Execute ansible.sh file
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/ansible.sh",
@@ -82,6 +88,7 @@ resource "aws_instance" "ansible_server" {
     ]
   }
 
+  # Create directory called test-project
   provisioner "remote-exec" {
     inline = [
       "sudo mkdir test-project",
@@ -89,22 +96,26 @@ resource "aws_instance" "ansible_server" {
     ]
   }
 
+  # Copy application servers keys to ansible server
   provisioner "file" {
     source      = "./keys/servers-key"
     destination = "test-project/servers-key"
   }
 
+  # Change mode of servers key
   provisioner "remote-exec" {
     inline = [
       "chmod 400 test-project/servers-key",
     ]
   }
 
+  # Copy plabook file to ansible server
   provisioner "file" {
     source      = "playbook.yaml"
     destination = "test-project/playbook.yaml"
   }
 
+  # Execute ansible playbook
   provisioner "remote-exec" {
     inline = [
       "export ANSIBLE_HOST_KEY_CHECKING=False",
@@ -112,6 +123,7 @@ resource "aws_instance" "ansible_server" {
     ]
   }
 
+  # Connect to ansible server
   connection {
     user        = "ubuntu"
     private_key = file("./keys/ansible-key")
