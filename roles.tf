@@ -14,6 +14,7 @@ resource "aws_iam_role" "ecr_pull_role" {
   })
 }
 
+# Creating I am role to pull image from ECR
 resource "aws_iam_policy" "ecr_pull_policy" {
   name        = "ecr-pull-policy"
   description = "policy for ECR pull access"
@@ -24,6 +25,7 @@ resource "aws_iam_policy" "ecr_pull_policy" {
       {
         Action = [
           "ecr:GetDownloadUrlForLayer",
+          "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetRepositoryPolicy",
           "ecr:DescribeRepositories",
